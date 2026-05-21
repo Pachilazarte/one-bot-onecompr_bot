@@ -37,10 +37,10 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: node src/index.js
 
-      - name: Hacer commit de la base de datos (duplicados)
+      - name: Hacer commit de la base de datos (duplicados y suscriptores)
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git add data/processed_processes.json
-          git commit -m "chore: actualizar procesos notificados" || echo "No hay cambios para hacer commit"
+          git add data/processed_processes.json data/subscribers.json
+          git commit -m "chore: actualizar procesos notificados y suscriptores" || echo "No hay cambios para hacer commit"
           git push

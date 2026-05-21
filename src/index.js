@@ -4,6 +4,7 @@ const path = require('path');
 const { scrapeProcesses } = require('./scraper');
 const { processData } = require('./processor');
 const { filterNewProcesses, saveProcessed } = require('./database');
+const { updateSubscribersFromTelegram } = require('./subscribers');
 const { generateSummary } = require('./ai');
 const { sendAlertEmail, sendTelegramAlert } = require('./notifier');
 
@@ -23,6 +24,9 @@ async function main() {
   const url = process.env.COMPRAR_URL || 'https://comprar.gob.ar/';
 
   try {
+    // 0. Actualizar base de datos de suscriptores de Telegram
+    await updateSubscribersFromTelegram();
+
     // 1. Scraping: extraer procesos de la tabla HTML
     const allProcesses = await scrapeProcesses(url);
 

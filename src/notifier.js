@@ -57,39 +57,50 @@ async function sendAlertEmail(newProcesses) {
   }
 }
 
+const { getSubscribers } = require('./subscribers');
+
 async function sendTelegramAlert(messageText) {
   if (!messageText) return;
 
-  const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = process.env;
+  const { TELEGRAM_BOT_TOKEN } = process.env;
 
-  if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) {
-    console.warn('Faltan credenciales de Telegram en el archivo .env. Saltando notificación por Telegram.');
+  if (!TELEGRAM_BOT_TOKEN) {
+    console.warn('Falta TELEGRAM_BOT_TOKEN en el archivo .env. Saltando notificación por Telegram.');
+    return;
+  }
+
+  const subscribers = getSubscribers();
+
+  if (subscribers.length === 0) {
+    console.log('No hay suscriptores guardados para enviar el mensaje por Telegram.');
     return;
   }
 
   const telegramApiUrl = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
-  try {
-    const response = await fetch(telegramApiUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: messageText,
-        parse_mode: 'Markdown'
-      })
-    });
+  console.log(`Enviando alerta de Telegram a ${subscribers.length} suscriptores...`);
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error('Error desde la API de Telegram:', errorData);
-    } else {
-      console.log('Mensaje de Telegram enviado exitosamente.');
+  for (const chatId of subscribers) {
+    try {
+      const response = await fetch(telegramApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text: messageText,
+          parse_mode: 'Markdown'
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error(`Error enviando a ${chatId}:`, errorData);
+      } else {
+        console.log(`Mensaje enviado exitosamente a ${chatId}.`);
+      }
+    } catch (error) {
+      console.error(`Error de red enviando a ${chatId}:`, error);
     }
-  } catch (error) {
-    console.error('Error enviando el mensaje a Telegram:', error);
   }
 }
 
