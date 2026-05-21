@@ -1,0 +1,6 @@
+node_modules/
+.env
+data/downloads/
+# Mantenemos data/processed_processes.json en git si usamos Github Actions, o lo ignoramos si es local.
+# Si usamos Github Actions, es útil mantener el historial ahí. Si es local, no.
+# Por ahora ignoramos los temporales.
