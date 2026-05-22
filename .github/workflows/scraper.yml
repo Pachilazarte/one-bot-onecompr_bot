@@ -45,4 +45,5 @@ jobs:
           git config --local user.name "GitHub Action Bot"
           git add data/ || true
           git commit -m "chore: actualizar procesos notificados y suscriptores" || echo "No hay cambios para hacer commit"
+          git pull --rebase origin main || true
           git push
