@@ -14,10 +14,10 @@ jobs:
 
     steps:
       - name: Checkout del repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Instalar Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '18'
 
@@ -43,6 +43,6 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action Bot"
-          git add data/processed_processes.json data/subscribers.json
+          git add data/ || true
           git commit -m "chore: actualizar procesos notificados y suscriptores" || echo "No hay cambios para hacer commit"
           git push
