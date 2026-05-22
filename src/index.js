@@ -50,10 +50,10 @@ async function main() {
       
       // 5. Guardar como procesados
       const newIds = newProcesses.map(p => p.numProceso);
-      saveProcessed(newIds);
-      console.log('Base de datos actualizada con los nuevos procesos.');
+      saveProcessed([...matchedProcesses.map(p => p.numProceso)]);
     } else {
-      console.log('No hay procesos nuevos para alertar.');
+      console.log('No hay procesos nuevos para alertar. Enviando aviso de estado...');
+      await sendTelegramAlert("💤 *Sin novedades en COMPR.AR*\n\nSe revisó el portal, pero no se encontraron nuevas licitaciones relacionadas a nuestro rubro tecnológico.");
     }
 
 
